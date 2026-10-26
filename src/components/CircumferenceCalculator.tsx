@@ -25,6 +25,13 @@ type Props = {
   title?: string;
 };
 
+/** Map real radius to SVG pixels so tiny and huge values still fit, but visibly grow/shrink. */
+function radiusToPixels(radius: number, minPx: number, maxPx: number): number {
+  if (!(radius > 0)) return (minPx + maxPx) / 2;
+  const t = Math.log10(radius + 1) / Math.log10(1001);
+  return minPx + Math.min(1, Math.max(0, t)) * (maxPx - minPx);
+}
+
 export default function CircumferenceCalculator({
   defaultMode = "radius",
   defaultValue = "10",
@@ -129,13 +136,17 @@ export default function CircumferenceCalculator({
 
           <div className="grid grid-cols-2 gap-3">
             {[
-              { label: "Radius (r)", value: result?.radius, accent: false },
-              { label: "Diameter (d)", value: result?.diameter, accent: false },
-              { label: "Circumference (C)", value: result?.circumference, accent: true },
+              { label: "Radius (r)", value: result?.radius, accent: mode === "radius" },
+              { label: "Diameter (d)", value: result?.diameter, accent: mode === "diameter" },
+              {
+                label: "Circumference (C)",
+                value: result?.circumference,
+                accent: mode === "circumference",
+              },
               {
                 label: "Area (A)",
                 value: result?.area,
-                accent: false,
+                accent: mode === "area",
                 unitSuffix: ` ${unit}²`,
               },
             ].map((row) => (
@@ -163,13 +174,16 @@ export default function CircumferenceCalculator({
 
         <div className="flex flex-col items-center justify-center rounded-2xl bg-gradient-to-b from-brand-soft to-blush/80 p-4">
           <CircleDiagram
+            mode={mode}
             radius={result?.radius ?? 0}
             diameter={result?.diameter ?? 0}
             circumference={result?.circumference ?? 0}
+            area={result?.area ?? 0}
             unit={unit}
           />
-          <p className="mt-3 max-w-xs text-center text-xs text-ink/55">
-            Live preview scales to your inputs. Units: {UNIT_LABELS[unit]}.
+          <p className="mt-2 max-w-xs text-center text-xs text-ink/55">
+            Diagram size tracks your radius. Labels show the same numbers as the results.
+            Units: {UNIT_LABELS[unit]}.
           </p>
         </div>
       </div>
@@ -178,66 +192,165 @@ export default function CircumferenceCalculator({
 }
 
 function CircleDiagram({
+  mode,
   radius,
   diameter,
   circumference,
+  area,
   unit,
 }: {
+  mode: CircleInputMode;
   radius: number;
   diameter: number;
   circumference: number;
+  area: number;
   unit: string;
 }) {
-  const size = 260;
+  const uid = useId().replace(/:/g, "");
+  const size = 300;
   const cx = size / 2;
-  const cy = size / 2;
-  const r = 88;
-  const tipX = cx + r;
+  const cy = size / 2 - 6;
+  const hasValue = radius > 0;
+  const baseR = 100;
+  const rPx = radiusToPixels(radius, 32, 100);
+  const scale = rPx / baseR;
+  const midRX = cx + rPx / 2;
+
+  const fillId = `ringFill-${uid}`;
+  const arcId = `arcStroke-${uid}`;
+  const areaId = `areaFill-${uid}`;
+
+  // Area fill opacity grows gently with real area (log-scaled).
+  const areaOpacity = hasValue
+    ? 0.12 + Math.min(0.28, (Math.log10(area + 1) / 4) * 0.28)
+    : 0.08;
 
   return (
     <svg
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox={`0 0 ${size} ${size + 36}`}
       width={size}
-      height={size}
+      height={size + 36}
       className="max-w-full"
       role="img"
       aria-label={
-        radius > 0
-          ? `Circle with radius ${formatNumber(radius)} ${unit}, diameter ${formatNumber(diameter)} ${unit}, circumference ${formatNumber(circumference)} ${unit}`
+        hasValue
+          ? `Circle scaled to radius ${formatNumber(radius)} ${unit}: diameter ${formatNumber(diameter)} ${unit}, circumference ${formatNumber(circumference)} ${unit}, area ${formatNumber(area)} ${unit}²`
           : "Circle diagram waiting for a valid input"
       }
     >
       <defs>
-        <linearGradient id="ringFill" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.22" />
-          <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.08" />
+        <linearGradient id={fillId} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.1" />
         </linearGradient>
-        <linearGradient id="arcStroke" x1="0" y1="0" x2="1" y2="0">
+        <linearGradient id={arcId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#0EA5E9" />
           <stop offset="100%" stopColor="#F59E0B" />
         </linearGradient>
+        <radialGradient id={areaId} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#38BDF8" stopOpacity={areaOpacity + 0.15} />
+          <stop offset="100%" stopColor="#0EA5E9" stopOpacity={areaOpacity} />
+        </radialGradient>
       </defs>
-      <circle cx={cx} cy={cy} r={r} fill="url(#ringFill)" stroke="#0EA5E9" strokeWidth="4" />
-      <path
-        d={`M ${tipX} ${cy} A ${r} ${r} 0 1 1 ${cx} ${cy - r}`}
+
+      {/* Soft guide for max drawable size */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={baseR}
         fill="none"
-        stroke="url(#arcStroke)"
-        strokeWidth="6"
-        strokeLinecap="round"
-        className="origin-center"
-        style={{ transformOrigin: `${cx}px ${cy}px` }}
+        stroke="#0EA5E9"
+        strokeOpacity="0.08"
+        strokeWidth="1"
+        strokeDasharray="4 6"
       />
-      <line x1={cx} y1={cy} x2={tipX} y2={cy} stroke="#0284C7" strokeWidth="3.5" strokeLinecap="round" />
-      <circle cx={cx} cy={cy} r="5" fill="#0F2236" />
-      <circle cx={tipX} cy={cy} r="5" fill="#F59E0B" />
-      <text x={cx + r / 2} y={cy - 10} textAnchor="middle" fill="#0369A1" fontSize="14" fontWeight="700">
-        r
+
+      {/* Geometry scales with calculated radius */}
+      <g
+        style={{
+          transform: `translate(${cx}px, ${cy}px) scale(${scale}) translate(${-cx}px, ${-cy}px)`,
+          transition: "transform 0.4s ease",
+        }}
+      >
+        <circle
+          cx={cx}
+          cy={cy}
+          r={baseR}
+          fill={`url(#${mode === "area" ? areaId : fillId})`}
+        />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={baseR}
+          fill="none"
+          stroke={`url(#${arcId})`}
+          strokeWidth={mode === "circumference" ? 7 / scale : 4.5 / scale}
+          strokeLinecap="round"
+        />
+        <line
+          x1={cx - baseR}
+          y1={cy}
+          x2={cx + baseR}
+          y2={cy}
+          stroke={mode === "diameter" ? "#F59E0B" : "#94A3B8"}
+          strokeWidth={(mode === "diameter" ? 3.5 : 2) / scale}
+          strokeLinecap="round"
+          strokeDasharray={mode === "diameter" ? undefined : `${5 / scale} ${5 / scale}`}
+        />
+        <line
+          x1={cx}
+          y1={cy}
+          x2={cx + baseR}
+          y2={cy}
+          stroke={mode === "radius" ? "#0284C7" : "#0369A1"}
+          strokeWidth={(mode === "radius" ? 4 : 3) / scale}
+          strokeLinecap="round"
+        />
+        <circle cx={cx} cy={cy} r={5 / scale} fill="#0F2236" />
+        <circle cx={cx + baseR} cy={cy} r={5.5 / scale} fill="#F59E0B" />
+        <circle cx={cx - baseR} cy={cy} r={4 / scale} fill="#0EA5E9" />
+      </g>
+
+      {/* Live value labels (unscaled so they stay readable) */}
+      <text
+        x={midRX}
+        y={cy - 12}
+        textAnchor="middle"
+        fill="#0369A1"
+        fontSize="12"
+        fontWeight="700"
+      >
+        {hasValue ? `r = ${formatNumber(radius, 4)} ${unit}` : "r"}
       </text>
-      <text x={cx} y={cy + r + 28} textAnchor="middle" fill="#0F2236" fontSize="13" fontWeight="600">
-        {radius > 0 ? `C ≈ ${formatNumber(circumference, 4)} ${unit}` : "C = 2πr"}
+
+      <text
+        x={cx}
+        y={cy + rPx + 18}
+        textAnchor="middle"
+        fill={mode === "diameter" ? "#D97706" : "#64748B"}
+        fontSize="11"
+        fontWeight="600"
+      >
+        {hasValue ? `d = ${formatNumber(diameter, 4)} ${unit}` : "d = 2r"}
       </text>
-      <text x={cx} y={28} textAnchor="middle" fill="#D97706" fontSize="22" fontWeight="800">
+
+      <text
+        x={cx}
+        y={cy - rPx - 14}
+        textAnchor="middle"
+        fill="#D97706"
+        fontSize="20"
+        fontWeight="800"
+      >
         π
+      </text>
+
+      {/* Same numbers as the result cards */}
+      <text x={cx} y={size + 4} textAnchor="middle" fill="#0F2236" fontSize="13" fontWeight="700">
+        {hasValue ? `C = ${formatNumber(circumference, 4)} ${unit}` : "C = 2πr = πd"}
+      </text>
+      <text x={cx} y={size + 22} textAnchor="middle" fill="#0369A1" fontSize="12" fontWeight="600">
+        {hasValue ? `A = ${formatNumber(area, 4)} ${unit}²` : "A = πr²"}
       </text>
     </svg>
   );
