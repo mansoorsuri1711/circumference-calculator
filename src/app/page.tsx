@@ -233,14 +233,15 @@ export default function Home() {
               know, enter the number, read every related measurement.
             </p>
           </div>
-          <div className="relative aspect-video overflow-hidden rounded-3xl border border-ink/10 shadow-lg shadow-violet/10">
+          <div className="overflow-hidden rounded-3xl border border-ink/10 bg-white shadow-lg shadow-violet/10">
             <Image
               src={BRAND_HERO}
               alt="Circumference Calculator — convert radius, diameter, and circumference"
-              fill
+              width={1600}
+              height={900}
               sizes="(max-width: 768px) 100vw, 50vw"
-              quality={70}
-              className="object-cover"
+              quality={80}
+              className="h-auto w-full"
               priority
             />
           </div>
@@ -349,14 +350,15 @@ export default function Home() {
         </section>
 
         <section className="mb-16 grid gap-10 md:grid-cols-2 md:items-center">
-          <div className="relative order-2 aspect-[4/3] overflow-hidden rounded-3xl border border-ink/10 md:order-1">
+          <div className="order-2 overflow-hidden rounded-3xl border border-ink/10 bg-white md:order-1">
             <Image
               src={BRAND_FEATURE_2}
               alt="Circumference Calculator tool interface showing circle formulas"
-              fill
+              width={1600}
+              height={900}
               sizes="(max-width: 768px) 100vw, 50vw"
-              quality={70}
-              className="object-cover"
+              quality={80}
+              className="h-auto w-full"
             />
           </div>
           <div className="order-1 md:order-2">
@@ -439,16 +441,15 @@ export default function Home() {
             },
           ].map((card) => (
             <article key={card.title} className="overflow-hidden rounded-2xl border border-ink/8 bg-white/70">
-              <div className="relative aspect-video">
-                <Image
-                  src={card.src}
-                  alt={card.alt}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  quality={70}
-                  className="object-cover"
-                />
-              </div>
+              <Image
+                src={card.src}
+                alt={card.alt}
+                width={1600}
+                height={900}
+                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={80}
+                className="h-auto w-full"
+              />
               <div className="p-4">
                 <h3 className="font-display text-lg font-semibold text-ink">{card.title}</h3>
                 <p className="mt-2 text-sm text-ink/65">{card.text}</p>

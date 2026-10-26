@@ -71,15 +71,14 @@ export default function BlogPage() {
               className="group block overflow-hidden rounded-2xl border border-ink/10 bg-white/80 transition-colors hover:border-violet/40 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet"
             >
               <article>
-                <div className="relative aspect-video">
-                  <Image
-                    src={post.image}
-                    alt={post.alt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover"
-                  />
-                </div>
+                <Image
+                  src={post.image}
+                  alt={post.alt}
+                  width={1600}
+                  height={900}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="h-auto w-full"
+                />
                 <div className="p-5">
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink/45">
                     {post.date} · {post.read}

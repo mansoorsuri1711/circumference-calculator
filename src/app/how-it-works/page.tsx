@@ -75,13 +75,14 @@ export default function HowItWorksPage() {
         </ol>
 
         <div className="mb-10 grid gap-8 md:grid-cols-2 md:items-center">
-          <div className="relative aspect-video overflow-hidden rounded-2xl border border-ink/10">
+          <div className="overflow-hidden rounded-2xl border border-ink/10 bg-white">
             <Image
               src={BRAND_FEATURE_3}
               alt="How Circumference Calculator converts circle measurements"
-              fill
+              width={1600}
+              height={900}
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
+              className="h-auto w-full"
             />
           </div>
           <div className="space-y-4 text-ink/75 leading-relaxed">

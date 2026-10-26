@@ -94,22 +94,24 @@ export default function FeaturesPage() {
         </div>
 
         <div className="mb-12 grid gap-6 md:grid-cols-2">
-          <div className="relative aspect-video overflow-hidden rounded-2xl border border-ink/10">
+          <div className="overflow-hidden rounded-2xl border border-ink/10 bg-white">
             <Image
               src={BRAND_FEATURE_2}
               alt="Circumference Calculator tool features and formula display"
-              fill
+              width={1600}
+              height={900}
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
+              className="h-auto w-full"
             />
           </div>
-          <div className="relative aspect-video overflow-hidden rounded-2xl border border-ink/10">
+          <div className="overflow-hidden rounded-2xl border border-ink/10 bg-white">
             <Image
               src={BRAND_FEATURE_4}
               alt="Circumference Calculator website branding preview"
-              fill
+              width={1600}
+              height={900}
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
+              className="h-auto w-full"
             />
           </div>
         </div>

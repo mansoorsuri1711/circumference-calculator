@@ -47,13 +47,14 @@ export default function RadiusVsDiameterPage() {
           Circle basics · Oct 26, 2026
         </p>
         <h1 className="mb-6 font-display text-3xl font-bold text-ink md:text-4xl">{title}</h1>
-        <div className="relative mb-8 aspect-video overflow-hidden rounded-2xl border border-ink/10">
+        <div className="mb-8 overflow-hidden rounded-2xl border border-ink/10 bg-white">
           <Image
             src={BRAND_FEATURE_3}
             alt="Diagram comparing radius, diameter, and circumference"
-            fill
+            width={1600}
+            height={900}
             sizes="(max-width: 768px) 100vw, 768px"
-            className="object-cover"
+            className="h-auto w-full"
             priority
           />
         </div>
