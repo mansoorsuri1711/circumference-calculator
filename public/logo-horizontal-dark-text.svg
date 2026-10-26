@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1560 280">
+<defs>
+  <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#38BDF8"/><stop offset="1" stop-color="#0369A1"/>
+  </linearGradient>
+  <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#22B4F0"/><stop offset="1" stop-color="#0284C7"/>
+  </linearGradient>
+  <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#0EA5E9"/><stop offset="1" stop-color="#F59E0B"/>
+  </linearGradient>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F3FAFE"/><stop offset="1" stop-color="#FFF9EE"/>
+  </linearGradient>
+  <radialGradient id="glowA" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#7DD3FC" stop-opacity="0.30"/><stop offset="1" stop-color="#7DD3FC" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="glowB" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#FCD34D" stop-opacity="0.25"/><stop offset="1" stop-color="#FCD34D" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+    <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#0F2236" flood-opacity="0.14"/>
+  </filter>
+</defs>
+<g transform="translate(20,20) scale(0.46875)">
+  <rect width="512" height="512" rx="120" fill="url(#tile)"/>
+  <circle cx="256" cy="256" r="140" fill="#fff" fill-opacity="0.14" stroke="#fff" stroke-width="22"/>
+  <line x1="256" y1="256" x2="396" y2="256" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="16" fill="#fff"/><circle cx="396" cy="256" r="16" fill="#fff"/>
+  <text x="326" y="234" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="48" fill="#fff">r</text>
+  <path d="M395.4 373.0 A182 182 0 1 1 410.3 159.6" fill="none" stroke="#F59E0B" stroke-width="20" stroke-linecap="round"/>
+  <polygon points="433.6,199.6 436.1,152.0 391.1,178.0" fill="#F59E0B"/>
+  <text x="196" y="338" text-anchor="middle" font-family="Poppins" font-weight="800" font-size="92" fill="#F59E0B">π</text>
+</g>
+<text x="300" y="168" font-family="Poppins" font-weight="700" font-size="100" fill="#0F2236" letter-spacing="-2">circumference<tspan fill="url(#accent)">calculator</tspan></text>
+<text x="306" y="230" font-family="Inter" font-weight="500" font-size="34" fill="#0F2236" fill-opacity="0.6" letter-spacing="5">.ORG · CIRCUMFERENCE · DIAMETER · AREA</text>
+</svg>
